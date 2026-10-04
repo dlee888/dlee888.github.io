@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Export</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" crossorigin="anonymous">
+  <style>
+    :root {
+      --background: 220 15% 98%;
+      --foreground: 215 25% 15%;
+      --primary: 215 70% 45%;
+      --primary-foreground: 0 0% 100%;
+      --muted: 210 25% 92%;
+      --muted-foreground: 215 15% 45%;
+      --accent: 35 90% 60%;
+      --accent-foreground: 215 25% 15%;
+      --border: 215 15% 88%;
+      --preview-bg: 0 0% 100%;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Merriweather', 'Georgia', serif;
+      line-height: 1.6;
+      background-color: hsl(var(--preview-bg));
+      color: hsl(var(--foreground));
+    }
+
+    .container {
+      max-width: 896px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      margin-top: 2rem;
+      color: hsl(var(--foreground));
+      border-bottom: 1px solid hsl(var(--border));
+      padding-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.875rem;
+      font-weight: bold;
+      margin-bottom: 1.25rem;
+      margin-top: 1.75rem;
+      color: hsl(var(--foreground));
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      margin-top: 1.5rem;
+      color: hsl(var(--foreground));
+    }
+
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      margin-top: 1.25rem;
+      color: hsl(var(--foreground));
+    }
+
+    h5 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      margin-top: 1rem;
+      color: hsl(var(--foreground));
+    }
+
+    h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      margin-top: 0.75rem;
+      color: hsl(var(--foreground));
+    }
+
+    p {
+      margin-bottom: 1rem;
+      line-height: 1.75;
+      color: hsl(var(--foreground) / 0.9);
+    }
+
+    a {
+      color: hsl(var(--primary));
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: hsl(var(--primary) / 0.8);
+    }
+
+    ul, ol {
+      margin-bottom: 1rem;
+      margin-left: 1.5rem;
+      color: hsl(var(--foreground) / 0.9);
+    }
+
+    ul {
+      list-style-type: disc;
+    }
+
+    ol {
+      list-style-type: decimal;
+    }
+
+    li {
+      line-height: 1.75;
+      margin-bottom: 0.5rem;
+    }
+
+    blockquote {
+      border-left: 4px solid hsl(var(--accent));
+      padding-left: 1rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      margin: 1rem 0;
+      font-style: italic;
+      background-color: hsl(var(--muted) / 0.3);
+      color: hsl(var(--foreground) / 0.8);
+    }
+
+    code {
+      background-color: hsl(var(--muted));
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: hsl(var(--accent-foreground));
+    }
+
+    pre {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      color: inherit;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      border: 1px solid hsl(var(--border));
+    }
+
+    thead {
+      background-color: hsl(var(--muted));
+    }
+
+    tbody {
+      background-color: transparent;
+    }
+
+    tr {
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    th {
+      padding: 0.5rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: hsl(var(--foreground));
+      border: 1px solid hsl(var(--border));
+    }
+
+    td {
+      padding: 0.5rem 1rem;
+      color: hsl(var(--foreground) / 0.9);
+      border: 1px solid hsl(var(--border));
+    }
+
+    hr {
+      margin: 2rem 0;
+      border: none;
+      border-top: 2px solid hsl(var(--border));
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Syntax highlighting styles */
+    .token.comment,
+    .token.prolog,
+    .token.doctype,
+    .token.cdata {
+      color: #6a9955;
+    }
+
+    .token.punctuation {
+      color: #d4d4d4;
+    }
+
+    .token.property,
+    .token.tag,
+    .token.boolean,
+    .token.number,
+    .token.constant,
+    .token.symbol,
+    .token.deleted {
+      color: #b5cea8;
+    }
+
+    .token.selector,
+    .token.attr-name,
+    .token.string,
+    .token.char,
+    .token.builtin,
+    .token.inserted {
+      color: #ce9178;
+    }
+
+    .token.operator,
+    .token.entity,
+    .token.url,
+    .language-css .token.string,
+    .style .token.string {
+      color: #d4d4d4;
+    }
+
+    .token.atrule,
+    .token.attr-value,
+    .token.keyword {
+      color: #c586c0;
+    }
+
+    .token.function,
+    .token.class-name {
+      color: #dcdcaa;
+    }
+
+    .token.regex,
+    .token.important,
+    .token.variable {
+      color: #d16969;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+<h1 class="text-4xl font-bold mb-6 mt-8 text-foreground border-b border-border pb-2" data-source-line="1">Why Do Stonks Go Up?</h1>
+<h2 class="text-3xl font-bold mb-5 mt-7 text-foreground" data-source-line="2"><em>A primer on the history of macroeconomics</em></h2>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="4">Before we start, let’s just take a moment to admire these adorable cows.
+<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flh5.googleusercontent.com%2F-PSYYGblAPt8%2FTWx45sWWBkI%2FAAAAAAAABOw%2F3KrIhZMg29o%2Fs1600%2FHighland_Cattle_2.jpg&amp;f=1&amp;nofb=1&amp;ipt=f2566495f270b6c71d07d338b59958f4d10d701ecb88fe07060cbf8ca34e113f&amp;ipo=images" alt="highland cows" class="max-w-full h-auto rounded-lg my-6 shadow-md">
+<strong>Also before we start, remember that all investing carries risks! Some types of investments may not be suitable for all investors and are subject to a wide range of risks, including significant loss of capital.</strong></p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="8">Now, let’s begin.</p>
+<h3 class="text-2xl font-semibold mb-4 mt-6 text-foreground" data-source-line="10">Ancient Debt Instruments</h3>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="12">The rise of finance was deeply intertwined with the rise of civilization itself. The earliest recorded written language in the Western world was that of the Sumerians in Mesopotamia, who first developed their script to track quantities of money and commodities that could be traded. One of the first recorded uses of multiplication and division among the Sumerians came in the form of tables used to convert between different prices of goods; certain patterns of products had to match, or else a counterparty could gain free money by executing the right combination of trades against that table.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="14">With multiplication out of the way, the Sumerians soon cleared the next big financial innovation: compounding interest. Many Sumerians, having amassed a certain level of belongings, noticed something interesting. Say someone had a herd of 10 cows. A year into the future, some of those cows might have naturally felt inclined to reproduce, thereby increasing the size of the herd. After some time, those calves would grow up and go on to produce children of their own, thus growing the size of the herd exponentially. This compounding effect becomes very powerful over long horizons. Say, for instance, that I invest $100,000 in a product that on average produces 10% annual returns. When I retire in roughly 40 years, the value of such an investment would be expected to grow to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>100000</mn><mo>×</mo><msup><mn>1.1</mn><mn>40</mn></msup><mo>≈</mo><mn>4.5</mn><mo>×</mo><msup><mn>10</mn><mn>6</mn></msup></mrow><annotation encoding="application/x-tex">100000\times1.1^{40}\approx4.5\times10^6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">100000</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.8141em;"></span><span class="mord">1.</span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8141em;"><span style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">40</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">4.5</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8141em;"><span style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">6</span></span></span></span></span></span></span></span></span></span></span>, a very hefty retirement savings balance.<sup><a href="#user-content-fn-1" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">1</a></sup> Archaeologists have found tablets doing exactly this calculation, plotting out families’ finances assuming different rates of breeding cattle. This introduces one of the core concepts of finance: that money, if invested, should naturally grow over time.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="16">People quickly realized that the converse of this was also true. If someone lent two cows to a friend for a year, and those cows reproduced, the friend could return the original two cows and end the interaction having gotten a free calf. In order to prevent people from exploiting this, lenders could charge interest on long term loans so that the calf would not be entirely free. In fact, the Sumerian word for interest was the exact same as their word for cow.<sup><a href="#user-content-fn-2" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">2</a></sup> The Sumerians had invented what we now call <strong>debt instruments</strong> (these can also go by other names such as bonds, loans, or debentures).</p>
+<h3 class="text-2xl font-semibold mb-4 mt-6 text-foreground" data-source-line="18">The Rise of Joint Stock Corporations</h3>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="20">One thing that is perhaps interesting to note about debt instruments is that they inadvertently also highlighted a fundamental relationship between return and risk. If someone did not have anything productive to do with their money, they could lend it out and receive a moderate amount of interest as a return on their investment. However, someone convicted that they had a more efficient use of the capital was no longer bound by the money that they had. They could borrow money at the prevailing interest rate and use it to execute their business idea. As long as their business idea produced a more profitable return than the interest rate, they could pay off their loan and pocket a tidy profit. Taking on debt would be beneficial because they would gain access to much more <strong>leverage</strong> than if they had not taken out a loan. As an example, say I had $1000 in the bank and a business idea that I was sure would return 10% over a year. Without taking out a loan, I would make $100 a year. However, if I had taken out a loan for $100,000 at a 4% interest rate, I would have made $10,000, which after the $4,000 interest payment leaves me with $6000 in profits, a significant increase from the $100 I would have made without borrowing. The obvious downside to this strategy is that businesses all inherently have risk. If my business was raising cattle, some cattle could have randomly died, or if my business was farming, a storm could have wiped out all of my crop. In those cases, I would be left with a crushing amount of debt.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="22">Luckily, societies around the world have come up with another structure that is less punishing for the operators of businesses, which we now call the <strong>limited liability corporation (LLC)</strong>. The idea first gained traction with European shippers: spices from Asia were extremely valuable, but building a ship to transport them to Europe was expensive and extremely risky. Taking on debt would not make a lot of sense because of the high probability that the mission would fail and the merchants would be unable to pay off the loan. Instead, they raised money by offering shares to investors. Each investor would contribute some fraction of the costs of sending a ship, and if the ship came back successful, they would get the corresponding fraction of the profits. If the ship was lost, the losses would be much more manageable because they would be spread out over many investors, each of whom contributed only a small amount. The company was limited liability in that each investor could only lose as much as their initial investment. Modern companies are much more complicated than the setup just described, but operate on roughly the same fundamental principle.</p>
+<h3 class="text-2xl font-semibold mb-4 mt-6 text-foreground" data-source-line="24">Modern Monetary Theory, Keynes, and the Business Cycle</h3>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="26">The theories proposed by John Maynard Keynes played a big role in the transition from these basic instruments to their more modern versions. Some of the most famous models in Keynesian economics are his theories of Keynesian multipliers and the IS-LM model. The idea of Keynesian multipliers is simple: consider trying to measure the GDP of a country, which is defined as the total value of all goods and services produced within that country. On the one hand, the GDP is roughly how much the population earns. On the other, GDP is the sum of consumer spending, investment in business, and government spending, a formula intro macroeconomics classes often write as
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>C</mi><mo>+</mo><mi>I</mi><mo>+</mo><mi>G</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">Y=C+I+G.</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.22222em;">Y</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.7667em; vertical-align: -0.0833em;"></span><span class="mord mathnormal" style="margin-right: 0.07153em;">C</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.7667em; vertical-align: -0.0833em;"></span><span class="mord mathnormal" style="margin-right: 0.07847em;">I</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal">G</span><span class="mord">.</span></span></span></span>
+Furthermore, consumers spend on average some fraction of their earnings, meaning that <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo>=</mo><mi>r</mi><mi>Y</mi></mrow><annotation encoding="application/x-tex">C=rY</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.07153em;">C</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mord mathnormal" style="margin-right: 0.22222em;">Y</span></span></span></span>, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span></span></span></span> is known as the marginal propensity to spend. Plugging this in and solving gives
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mfrac><mrow><mi>I</mi><mo>+</mo><mi>G</mi></mrow><mrow><mn>1</mn><mo>−</mo><mi>r</mi></mrow></mfrac><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">Y=\frac{I+G}{1-r}.</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.22222em;">Y</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.2757em; vertical-align: -0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.8723em;"><span style="top: -2.655em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight" style="margin-right: 0.02778em;">r</span></span></span></span><span style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span style="top: -3.394em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right: 0.07847em;">I</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight">G</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord">.</span></span></span></span>
+Why is this important? This is where the IS-LM model comes in. The details are not as relevant to our current discussion, but some of the basic effects are that an increase in the interest rate will lead to a decrease in investment.<sup><a href="#user-content-fn-3" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">3</a></sup> Furthermore, it may lead to a decrease in the marginal propensity to spend. Both these factors decrease GDP, which is correlated to decreasing market returns.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="32">In the modern approach to fiscal and monetary policy, governments have realized that they can control GDP via a few means. The most common ways are to either increase government spending (or equivalently, cutting taxes), or to change the interest rate. Government spending is largely controlled by congress and is generally less of a point of discussion in market news. It’s the job of the federal reserve to set the interest rate, and unlike government spending, these changes often influence markets on a more noticeable time scale. Setting the interest rate is an incredibly difficult balancing act: set it too high and the economy stalls and unemployment rises, but set it too low and the economy overproduces, leading to runaway inflation.<sup><a href="#user-content-fn-4" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">4</a></sup> Therefore, the US government tends to carefully set the interest rate, and then trade <strong>US treasuries</strong> (the collective term for government issued debt instruments) until the short term interest rate matches their desired rate. An interesting effect of this system is that national debt shifts from being a debt in the traditional sense and starts being a counter of how much money the government has printed or taken back in so that they could balance inflation and unemployment. Here’s a more concrete visualization. Many treasuries are issued with a fixed par value and coupon rate, and trade at discounts or premiums as the Fed’s target interest rate changes. As an example, a bond might be issued at $100 par value with a 4% coupon, meaning that the owner of the bond is paid $4 every year they hold it. When the bond matures, the owner will receive the $100 they paid to the government originally. Let’s assume for simplicity that this bond matures exactly 1 year in the future. If the interest rate were to rise to 5%, the bond would then trade in the secondary markets around $99. This way, the buyer would pay $99 upfront, and 1 year later receive $4 in coupon payments and $100 in principal, making a total of $5 in profit, or roughly 5% of their initial investment. Conversely, if the interest rate were to lower to 3%, the bond would be priced at around $101. Therefore, interest rates and bond prices have an inverse relationship - when interest rates rise, bond prices fall, and vice versa.</p>
+<div class="my-6 overflow-x-auto" data-source-line="34"><table class="w-full border-collapse border border-border"><thead class="bg-muted text-foreground"><tr class="border-b border-border"><th class="px-4 py-2 text-left font-semibold text-foreground border border-border">Fed Target</th><th class="px-4 py-2 text-left font-semibold text-foreground border border-border">Fed Open Market Operations</th><th class="px-4 py-2 text-left font-semibold text-foreground border border-border">Price Movement</th><th class="px-4 py-2 text-left font-semibold text-foreground border border-border">Money Supply Effect</th><th class="px-4 py-2 text-left font-semibold text-foreground border border-border">Economic Effect</th></tr></thead><tbody><tr class="border-b border-border"><td class="px-4 py-2 text-foreground/90 border border-border">Raises interest rates</td><td class="px-4 py-2 text-foreground/90 border border-border">Sells bonds</td><td class="px-4 py-2 text-foreground/90 border border-border">Bond prices move down</td><td class="px-4 py-2 text-foreground/90 border border-border">Money taken out of economy</td><td class="px-4 py-2 text-foreground/90 border border-border">Decreases production, decreases inflation, increases unemployment</td></tr><tr class="border-b border-border"><td class="px-4 py-2 text-foreground/90 border border-border">Lowers interest rates</td><td class="px-4 py-2 text-foreground/90 border border-border">Buys bonds</td><td class="px-4 py-2 text-foreground/90 border border-border">Bond prices move up</td><td class="px-4 py-2 text-foreground/90 border border-border">Money put into economy</td><td class="px-4 py-2 text-foreground/90 border border-border">Decreases production, decreases inflation, increases unemployment</td></tr></tbody></table></div>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="39">Some economists have developed the theory of the <strong>business cycle</strong>, which goes as follows. The market tends to have boom and bust periods. In the normal state, interest rates are relatively low and business is growing as usual. In order to curb inflation, the government will gradually raise interest rates. This will lead to a slowing down of the economy, which raises the risks of underconsumption and/or recession. When the recession happens and unemployment rises, the government will lower interest rates to stimulate the economy, bringing us back to the start of the cycle.<sup><a href="#user-content-fn-5" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">5</a></sup> Some analysts look at <strong>yield curves</strong> to see if interest rates are increasing or decreasing and thereby determine what stage of the business cycle the market is in. However, the timing of the business cycle is not possible to predict, and investing based on these heuristics often yields mixed results.
+<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.rba.gov.au%2Feducation%2Fimages%2Fexplainers%2Fbonds-and-the-yield-curve%2Fbonds-and-the-yield-curve-07.jpg&amp;f=1&amp;nofb=1&amp;ipt=94a174e094dad998efd6ebe027a1460204a2be75abc7fd52876bd6da606434fa&amp;ipo=images" alt="yield curves" class="max-w-full h-auto rounded-lg my-6 shadow-md"></p>
+<h3 class="text-2xl font-semibold mb-4 mt-6 text-foreground" data-source-line="42">Market Efficiency and the Capital Assets Pricing Model</h3>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="44">Throughout the middle of the 20th century, academics began taking a more scientific approach to economics and finance. Many claimed the ability to predict the movements of stocks and pick ones that were likely to go up in the near future, and academics began using statistics to test whether these people were right. In an article that caused quite an uproar, one researcher published an article where he compared a large group of these stock pickers to a strategy that selected random stocks. Over a period of time, some of the stock pickers’ portfolios went up, while some went down. Same for the randomly selected portfolios. When graphed, the distribution of returns looked virtually identical.<sup><a href="#user-content-fn-6" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">6</a></sup>
+<img src="https://dlee888.github.io/cdn/stock_picker_vs_random.png" alt="stock pickers vs random" class="max-w-full h-auto rounded-lg my-6 shadow-md">
+Famous economist Eugene Fama summed this up with his <strong>efficient market hypothesis</strong>. Essentially, he found that the past returns of stocks were totally uncorrelated with future returns, and that prices in financial markets were essentially random walks. In essence, the price of any given stock already contains the effects of all information known to the market up until that moment, and the price is “fair” in the sense that any buyer can’t get a significantly lower price by some other party that has analyzed the market more extensively, and likewise any seller can’t sell for a significantly higher price. The price that liquidity demanders transact at is roughly the best price they could possibly get.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="48">Now, if you’ve ever heard of a quantitative trading company, it’s pretty clear that the efficient market hypothesis isn’t completely true. It is in fact possible to find correlations between past prices and future prices. However, the industry is extremely competitive and finding these patterns are extremely difficult. Once one company finds a pattern, they can immediately execute the sequence of good trades, pushing the price to one that is more fair and excluding other companies from profiting off the same pattern. In this way, the effect of having many such proprietary trading firms is that the market becomes more and more efficient the more these companies trade. However, even at a top firm, it takes a team of PhD level researchers many months to come up with a prediction that is just 0.5% better than guessing, so for all practical purposes average investors can assume that markets are perfectly efficient.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="50">Another influential idea was the theory of the <strong>capital asset pricing model</strong> (CAPM), or modern portfolio theory. The premise is simple: the vast majority of intelligent investors act to maximize the return of their investments given a fixed level of risk that they are willing to tolerate. One such optimal strategy is to just put all of one’s capital into US treasuries. Traditionally, US treasuries have been considered the least risky out of all investments, due to the fact that they are backed by the full credit and taxing power of the US Government. Therefore, the current interest rate on US treasuries is normally taken as a baseline, “risk-free” rate of return.<sup><a href="#user-content-fn-7" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">7</a></sup> Mathematically, one can express the return over this baseline per unit risk as the <strong>Sharpe ratio</strong>:
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>h</mi><mi>a</mi><mi>r</mi><mi>p</mi><mi>e</mi><mo>=</mo><mfrac><mrow><msub><mi>R</mi><mi>p</mi></msub><mo>−</mo><msub><mi>R</mi><mi>f</mi></msub></mrow><msub><mi>σ</mi><mi>p</mi></msub></mfrac><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">Sharpe=\frac{R_p-R_f}{\sigma_p},</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.05764em;">S</span><span class="mord mathnormal">ha</span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mord mathnormal">p</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.5337em; vertical-align: -0.5423em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.9914em;"><span style="top: -2.655em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right: 0.03588em;">σ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1645em;"><span style="top: -2.357em; margin-left: -0.0359em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2819em;"><span></span></span></span></span></span></span></span></span></span><span style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span style="top: -3.5131em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right: 0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1645em;"><span style="top: -2.357em; margin-left: -0.0077em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2819em;"><span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right: 0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3448em;"><span style="top: -2.3488em; margin-left: -0.0077em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right: 0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2901em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.5423em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mpunct">,</span></span></span></span>
+where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">R_p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.9694em; vertical-align: -0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1514em;"><span style="top: -2.55em; margin-left: -0.0077em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2861em;"><span></span></span></span></span></span></span></span></span></span> is the return of a portfolio, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>f</mi></msub></mrow><annotation encoding="application/x-tex">R_f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.9694em; vertical-align: -0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3361em;"><span style="top: -2.55em; margin-left: -0.0077em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right: 0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2861em;"><span></span></span></span></span></span></span></span></span></span> is the risk free rate, and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>σ</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">\sigma_p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7167em; vertical-align: -0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.03588em;">σ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1514em;"><span style="top: -2.55em; margin-left: -0.0359em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2861em;"><span></span></span></span></span></span></span></span></span></span> is the standard deviation of the returns of the portfolio. Under the assumption that everyone tries to hold a portfolio that maximizes their Sharpe ratio, one can show that it is optimal to hold a diversified portfolio containing all the stocks, holding each one with a size proportional to that stock’s market capitalization.<sup><a href="#user-content-fn-8" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">8</a></sup> This is why so many ETFs today are weighted by market cap; this way, the ETF is able to maximize return for a given risk.</p>
+<h3 class="text-2xl font-semibold mb-4 mt-6 text-foreground" data-source-line="54">Other Securities</h3>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="56">One major limitation of CAPM is it only considers two types of securities, namely US treasuries and US equities (an equity is just another name for a stock). In practice, many have found adding foreign equities to be a way of diversifying even more of their portfolio’s risk. However, depending on your country of citizenship and the foreign country you wish to invest in, there may be complications with investing in foreign stocks, regarding currencies, taxes, brokerages, etc. There is a type of security known as an American Depository Receipt (ADR) that allows foreign companies to be listed on American stock exchanges (these might be called GDRs if you’re not trading in the US). Additionally, there are a class of international ETFs that enable exposure to a wide range of foreign markets while still being traded entirely on American exchanges.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="58">One asset class popular among retail investors is options. Call options are a type of contract that give the buyer of the option the right, but not the obligation, to buy a certain underlying symbol at a predetermined strike price from the seller of the option, at or before a fixed expiration date. Similarly, put options give the buyer the right, but not the obligation, to sell an underlying at the strike price. For instance, the buyer of an NVDA 230 Oct C has the right to buy NVDA stock for $230 per share, and the buyer can exercise this right on or before the third Friday of October that year. If NVDA is trading in the market at 234, the holder could exercise the option and then immediately sell the shares in the market, gaining $4 per share. However, if NVDA is trading in the market for 224, the holder could simply choose to not exercise the option, since if they desired to buy shares of NVDA, it would be cheaper to simply buy them in the market. Buyers of options pay a premium to have this optionality, while sellers of options receive a premium in exchange for being obligated to buy or sell at a possibly unfavorable price.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="60">Options are generally seen as very risky due to the fact that they provide easy access to <strong>leverage</strong>. The idea of leverage is that one can magnify gains and losses through borrowing (either explicitly or implicitly). Imagine I think a stock will go up from $100 to $101 tomorrow, and I have $1,000 in my account. I can spend $1,000 to buy 10 shares of this stock, and if I’m right I will make $10. If I’m wrong and the stock goes down to $99 instead, I’ll lose $10. If I were to instead increase my leverage using margin, I would use my $1,000 to borrow another $1,000. Then, I could buy 20 shares of this stock. If I’m right and the stock goes to $101, I can sell my stake for $2,020 and pay back the $1,000, leaving me with $1,020, or $20 of profit. If I’m wrong and the stock goes down to $99, I would still have to pay back the $1,000, leading to a $20 loss. This is how leverage can magnify both profits and losses.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="62">The contract size for a standard option is 100 shares, which creates a lot of implicit leverage. Say, for instance, that you are interested in buying a 230 NVDA call option, and NVDA is trading at 234. The cost of your option might be around 5 to 8 (the option has $4 per share of intrinsic value, plus a few extra dollars of time value due to the optionality). Therefore, you can buy the option by putting down only $500-$800, but in reality you’re exposed to the movement of $23,400 worth of stock. If the underlying NVDA stock goes down just 2% by the expiration date, it will be trading below the strike price and the option will expire worthless, a 100% loss. Even if the underlying only drops 1%, in this specific case the option will expire with an intrinsic value of $1.66, a 70-80% loss by our rough estimates.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="64">While options themselves are extremely risky, certain combinations of options along with their underlyings can be used to reduce risk compared to holding the underlying alone. The most common combinations are covered calls and protective puts to protect a long position (covered puts and protective calls also exist to protect short positions, but are comparatively less common). In a covered call, an investor will long 100 shares of an underlying stock and short one contract of a call option. For instance, say I buy 100 shares of NVDA for 234 but I also sell one NVDA 240 C for a premium of $1 per share. In essence, I’m receiving $100 from someone else in exchange for them having the option to buy my 100 shares if the price of NVDA ever goes above 240. If NVDA goes down, my position also goes down, but I lose $100 less than I would have if I had not written the call. If NVDA goes up, my position also goes up, but my gain is capped at $600. On the other side, there are protective puts. Instead of selling a call, I can instead buy a put at a strike price lower than the price I paid for the stock. Say I buy a 228 put for a premium of $1. Then, if NVDA goes up, my position also goes up, but my gain is $100 less than it would have been if I had not bought the option. If NVDA goes down, my loss is capped at $600 because I always have the right to sell my position off for $228 per share.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="66">Some investors trade other, more complex combinations of options such as straddles, spreads, butterflies, or condors. These combinations are usually unsuitable for normal investors. There are also asset classes that are sometimes traded. Futures enable speculation on the future prices of various commodities; however, trading these contracts is complicated and not suitable for general investors. If exposure to these commodities is desired (one common example is gold), there may also be ETFs or ETPs that provide similar exposure. Futures can also be used to gain exposure to various indices, such as the value of the S&amp;P 500, Nasdaq index, CBOE volatility index, average Fed funds rate, and many others. However, these contracts generally have minimum contract sizes in the several hundreds of thousands of dollars, and so they are only suitable for accredited investors (investors who have over $1,000,000 in liquid assets or make over $200,000 a year). Some foreign investors might want to trade currencies (forex) and their derivatives if they own investments that trade in different currencies, however, speculating on the movements of exchange rates is highly discouraged. Finally, some <a href="https://www.reddit.com/r/wallstreetbets/" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">r/wallstreetbets</a> degenerates like to trade products known as leveraged ETFs and inverse ETFs. These are ETFs that provide some multiple of the daily return of a basket they track. For example, a 2x long S&amp;P 500 ETF will have a return every day of twice that of a normal S&amp;P 500 tracking ETF. If the S&amp;P is up 2%, the leveraged ETF will be up 4%, and if it is down 2%, the leveraged ETF will be down 4%. Due to an effect known as volatility drag, over long periods of time, these ETFs will not match the expected multiple of the underlying basket’s return, but instead decay in value. Because of this, leveraged ETFs are generally seen as only suitable for day traders.</p>
+<h3 class="text-2xl font-semibold mb-4 mt-6 text-foreground" data-source-line="68">Tax Aware Investing</h3>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="70">The US tax rules are very complicated, and there are several strategies to take advantage of tax exemptions. I’m not familiar with the tax rules for noncitizens, so make sure to do research to see if there are any rules to take advantage of or watch out for. For someone trying to maximize their investment returns in the US, careful analysis of tax rules is crucial! If you are subject to taxation of your investment income, then it is strongly recommended to open one or more tax advantaged investment accounts. These include traditional or Roth IRAs, or if your employer supports them, traditional or Roth 401(k)s. There are many other bespoke tax advantaged investment vessels, but most are not suitable for all investors.<sup><a href="#user-content-fn-9" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">9</a></sup></p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="72">Even if someone is not subject to certain rules, these rules can still influence the prices of certain assets. The most relevant examples are US treasuries and municipal bonds. Interest from US Treasuries is exempt from state and local taxes, but is still subject to federal tax. Municipal bonds, however, are bonds issued by states, cities, and other municipal governments. These bonds are exempt from federal, state, and local taxes. As a result, the yields on municipal bonds tend to be much lower, as investors are willing to accept much lower yields due to the fact that after taxes are considered, they get to pocket roughly the same amount as if they had invested in a treasury and paid federal tax on it. It’s possible to calculate a tax equivalent yield for these municipal bonds: if a municipal bond had a 2.5% yield, and my marginal federal tax rate was 37%, then it would be equivalent to a treasury with yield <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mn>2.5</mn><mi mathvariant="normal">%</mi></mrow><mrow><mn>1</mn><mo>−</mo><mn>0.37</mn></mrow></mfrac><mo>=</mo><mn>3.96</mn><mi mathvariant="normal">%</mi></mrow><annotation encoding="application/x-tex">\frac{2.5\%}{1-0.37}=3.96\%</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1.3223em; vertical-align: -0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.919em;"><span style="top: -2.655em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mbin mtight">−</span><span class="mord mtight">0.37</span></span></span></span><span style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span style="top: -3.394em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2.5%</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8056em; vertical-align: -0.0556em;"></span><span class="mord">3.96%</span></span></span></span>. These are contrasted with corporate bonds, which are debt instruments issued by various companies. These are subject to both federal, state, and local tax, and additionally have even higher yields due to the fact that these companies are not as creditworthy as the US government.</p>
+<h3 class="text-2xl font-semibold mb-4 mt-6 text-foreground" data-source-line="74">Practical Notes and Risks</h3>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="76">So what do we make of all of this? If you’re a true believer of the efficient market hypothesis and CAPM, then the optimal portfolio would be to hold some combination of every stock in the market weighted by market cap and US treasuries. The exact weight depends on personal risk tolerance: weighting treasuries more will lead to lower returns but also lower risk, and the Sharpe ratio will remain unchanged. There are many total market ETFs out there, one of the most popular of which is VTSAX (technically this is a mutual fund, the ETF version of it is VTI). Even more popular are S&amp;P 500 tracking ETFs, which track the market cap weighted average of the 500 largest market cap companies in America. Some of the most popular ones are SPY, VOO, SPYM, and IVV. Historically, the returns of the S&amp;P 500 have been quite strong, and there may be reasons to suspect it performs even better than VTSAX on a risk adjusted basis. One plausible explanation could be that historically, smaller cap stocks tend to be more volatile and less efficient since not many people trade them, leading to excessive trading costs and unnecessary volatility. However, past performance is not indicative of future results, and it’s very hard to tell if VTSAX or SPY will perform better in the future. These indices tend to go up at the risk free rate plus an additional return that economists call the <strong>risk premium</strong>, meaning the extra return needed to justify the additional risk that investors take on. Estimates put the historical risk premium around 4-7%, but these numbers are not necessarily indicative of what the risk premium will be in the future.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="78">Diversifying between US stocks and foreign stocks is generally also encouraged, but there doesn’t seem to be a set ratio between the two that is clearly better than the others. Generally, investors allocate their portfolio between domestic and foreign stocks depending on how much risk they are willing to take and how patriotic they are feeling in that moment. Risk tolerance should also depend on age. Younger investors can have a bigger appetite for risk given that their investments have much more time to compound and they still have the majority of their lifetime earnings ahead of them. Older investors should be more risk averse, since they have less time ahead of them to save for retirement and they have less time to recover from potential market crashes. Therefore, it is generally recommended for investors to move their portfolio into more stable instruments such as bonds as they age.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="80">There are other funds that are not as broad as the S&amp;P 500 but are still relatively diversified. These funds are characterized by how much of their portfolio lies in each of 9 categories. A stock is either small, medium, or large cap, and can be categorized as value, blend, or growth. Small caps are more unstable, since smaller companies have larger chances of going bankrupt, but also have much larger potential for upside. Large caps, on the other hand, are seen as more stable. Value stocks are stocks that have a stable revenue stream; these stocks tend to pay consistent dividends and remain relatively stable in value (think companies like Walmart or McDonalds). Growth stocks on the other hand have less stable revenue but have potential for technological development and expansion (think companies like Nvidia or SpaceX).
+<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.morningstar.com.au%2Fmca%2Fs%2Feditorial%2FMorningstar%2520style%2520box.PNG&amp;f=1&amp;nofb=1&amp;ipt=6c46359cd2b2bfcf2423ef8773d8b4500d1167c0a249527959d004c8c46d0553&amp;ipo=images" alt="fund categories" class="max-w-full h-auto rounded-lg my-6 shadow-md">
+Investors who wish to engage in various forms of “activist investing” can also invest in ETFs that track various industry sectors, or look at stocks with certain environmental, social, and governance (ESG) ratings.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="84">One thing that I cannot reiterate enough is that all investing has risks, and past performance is not necessarily indicative of future results. Many of the assumptions and theories that people invest based on have held up reasonably well in the past, but there is nothing fundamentally guaranteeing that they will continue on into the future. Impressive historical results can boost our confidence in a strategy, but can never eliminate the chance that something goes horribly wrong in the economy. Even under normal conditions, there are some risks to beware of. Below are some of the most common ones:</p>
+<ul class="mb-4 ml-6 list-disc space-y-2 text-foreground/90" data-source-line="85">
+<li class="leading-relaxed" data-source-line="85">Business risk: This is risk that arises from holding a concentrated position in one particular company. An adverse event happening to this company could permanently destroy a large portion of that position’s value. One notorious example of this is pharmaceutical stocks, which regularly double or halve in value overnight upon the release of drug trial results. This type of risk can be avoided by holding a diversified portfolio.</li>
+<li class="leading-relaxed" data-source-line="86">Regulatory risk: A portfolio heavily concentrated in a sector might go down significantly upon release of unfavorable legislation. For instance, a portfolio of fossil fuel companies might tank in value when environmental regulation is published.</li>
+<li class="leading-relaxed" data-source-line="87">Political risk: Investments in various countries might risk losing value if geopolitical instability arises in the vicinity of said countries.</li>
+<li class="leading-relaxed" data-source-line="88">Market risk: Unlike business risk, this risk cannot be avoided by diversifying a portfolio. Market risk is the risk that the entire stock market decreases due to a struggling economy.</li>
+<li class="leading-relaxed" data-source-line="89">Interest rate risk: This one is interesting because it affects both stocks and bonds. When interest rates rise, the market will tend to go down, and the prices of bonds will also go down. Bonds with longer maturities and lower coupon rates are particularly sensitive to interest rate risk, since the change in interest rate gets compounded over a much longer period. If interest rates do not go back down, investors in need of quick cash with long duration bonds may find themselves only able to liquidate those bonds for much less than they initially bought them for.</li>
+</ul>
+<h3 class="text-2xl font-semibold mb-4 mt-6 text-foreground" data-source-line="91">A Final Word of Caution</h3>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="93">In a world where there are so many complicated and exotic financial products and teams of charismatic salespeople behind each one, it’s important to exercise caution and critical thinking before considering each one. A couple things to consider: if XYZ product is so good, why isn’t everyone investing in it? If a stock is likely to generate a huge return, why aren’t more people buying it, pushing up the price until the future return becomes more normal? As a general rule, nobody tries to sell you a product purely because they want you to benefit from it, people generally sell you products that they benefit from you buying. So, unless you can convince yourself that there’s a really good reason why both you and the marketer can benefit from the transaction, it’s very unlikely that the product will outperform a more standard investment strategy.<sup><a href="#user-content-fn-10" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">10</a></sup> Also, stock picking websites and newsletters are very common, but there’s no evidence that they do any better than the ones Cowles studied. It’s really easy to recommend a wide range of stocks and cherry pick the ones that went up the most for advertising. Generally, these newsletters are suspicious because if their recommendations were actually profitable, they could make many orders of magnitude more money trading the predictions themselves than they could selling their newsletter. Finally, generally be suspicious of any strategy that claims to beat the market or be profitable day trading.<sup><a href="#user-content-fn-11" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">11</a></sup> Keep in mind that statistically, for every trade that you execute in the market, the person on the other side of that trade is likely to be a company like Jane Street, HRT, or Citadel. They will be selling to you when you are buying, and buying from you when you are selling. The fact that they make an exorbitant amount of money doing this should be slightly scary to anyone who thinks that they can make money day trading.</p>
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="95">Investing is certainly risky, but if you’re in a financial position where you are able to take on some risk, it can be very rewarding. With the help of proper financial planning and the market’s compounding effects, a good investment strategy can make saving for retirement a much easier endeavor. Good luck, have fun, and wishing your stonks to the moon!
+<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.imgflip.com%2F3mym0p.png&amp;f=1&amp;nofb=1&amp;ipt=88754ceaf4c4ff70a6f228998de96a07f35002dadc4bc2d772c7b9fd3fcc022d&amp;ipo=images" alt="stonks man" class="max-w-full h-auto rounded-lg my-6 shadow-md"></p>
+<section data-footnotes="true" class="footnotes"><h2 class="text-3xl font-bold mb-5 mt-7 text-foreground">Footnotes</h2>
+<ol class="mb-4 ml-6 list-decimal space-y-2 text-foreground/90">
+<li class="leading-relaxed" data-source-line="98">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="98">Luckily, this works out quite well for me since I’m so young. Unfortunately, the math is not as favorable (but still pretty good) for older people. <a href="#user-content-fnref-1" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+<li class="leading-relaxed" data-source-line="99">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="99">As a fun fact, the English words cattle and capital also have the same root word. <a href="#user-content-fnref-2" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+<li class="leading-relaxed" data-source-line="100">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="100">This might seem opposite to normal intuition, but remember that investment in our model means something slightly different. Investment here means investing in physical capital to improve the means of production; for example, think of investing a large sum of money in a tractor that would be able to increase the crop yields on your farming business in the years to come. If the interest rate is higher, these investments seem less attractive because you’re spending more in terms of next year’s money. It would be comparatively more attractive to put the money in bonds instead. <a href="#user-content-fnref-3" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+<li class="leading-relaxed" data-source-line="101">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="101">Ask me if you want to know the reasons behind these effects! <a href="#user-content-fnref-4" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+<li class="leading-relaxed" data-source-line="102">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="102">The astute among you might ask, why does the government not just avoid overshooting in adjusting the interest rate, maintaining growth without excessive inflation? There are several reasonable explanations for this. First, getting the interest rate exactly right is very hard, and in fact in recent decades, the Fed has been getting better at this, leading to the business cycle being less pronounced. Second, the Fed is often influenced by other factors out of their control, such as tariffs or emergencies (think COVID-19), that necessitate compromising on one or the other of their inflation and unemployment goals. Third, consumer sentiments themselves and other market factors play a big role in these effects, and they are generally very unpredictable. <a href="#user-content-fnref-5" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+<li class="leading-relaxed" data-source-line="103">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="103">The paper is not very long and a fun read. If you’re interested, you can find it <a href="https://cowles.yale.edu/sites/default/files/2022-08/cowles-forecasters33.pdf" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">here</a> <a href="#user-content-fnref-6" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+<li class="leading-relaxed" data-source-line="104">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="104">One might look at the current national debt and question whether or not US treasuries really are as riskless as people suggest. Up until now, there has seemed to be no shortage of people willing to lend to the government, so the US has always been able to issue more debt to cover the previous principal payments. Additionally, this level of debt is actually not uncommon for countries with modern economies. For instance, Japan has roughly twice as much debt compared to its GDP as the US does. However, there are valid concerns as to whether or not the US could have financing issues in the future. Last year, Moody’s (a major credit agency) famously <a href="https://www.pgpf.org/article/moodys-downgraded-its-us-credit-rating-and-warns-that-recent-policy-decisions-will-worsen-fiscal-outlook/" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">downgraded</a> the US’s credit rating, resulting in it no longer being rated the highest level by any major credit agency. <a href="#user-content-fnref-7" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+<li class="leading-relaxed" data-source-line="105">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="105">As always, feel free to ask me if you want a derivation! <a href="#user-content-fnref-8" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+<li class="leading-relaxed" data-source-line="106">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="106">Talk to me if you want to hear about some really interesting ones! <a href="#user-content-fnref-9" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+<li class="leading-relaxed" data-source-line="107">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="107">Feel free to let me know if you ever encounter one of these situations! I really enjoy reading about creative ways people convince others to give them their investment money. <a href="#user-content-fnref-10" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+<li class="leading-relaxed" data-source-line="108">
+<p class="mb-4 leading-relaxed text-foreground/90" data-source-line="108">Warren Buffet once made a famous bet where he offered a $1 million prize to any hedge fund manager who could outperform the S&amp;P 500 over a long horizon. Despite many professional hedge fund managers’ <a href="https://www.investopedia.com/articles/investing/030916/buffetts-bet-hedge-funds-year-eight-brka-brkb.asp" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">best efforts</a>, none of them were able to claim the prize. <a href="#user-content-fnref-11" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">↩</a></p>
+</li>
+</ol>
+</section>
+  </div>
+</body>
+</html>
